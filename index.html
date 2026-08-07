@@ -626,18 +626,19 @@ function generateVoiceover() {
   };
 
   utterance.onend = function () {
-    status.textContent = "✅ Voiceover finished.";
-<script>
-  function openCreator() {
-    document.getElementById("home").style.display = "none";
-    document.querySelector(".features").style.display = "none";
-    document.getElementById("creator").style.display = "block";
+  status.textContent = "✅ Voiceover finished.";
+};
 
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth"
-    });
-  }
+function openCreator() {
+  document.getElementById("home").style.display = "none";
+  document.querySelector(".features").style.display = "none";
+  document.getElementById("creator").style.display = "block";
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+}
 
   async function generateScript() {
     const topic = document.getElementById("topic").value.trim();
