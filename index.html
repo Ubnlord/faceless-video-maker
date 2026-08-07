@@ -458,8 +458,9 @@ function openCreator() {
 
   const result = document.getElementById("result");
   const output = document.getElementById("scriptOutput");
-  const button = document.querySelector(".generate-btn");
-
+  const button = document.querySelector(
+  'button[onclick="generateScript()"]'
+);
   const API_URL =
     "https://script.google.com/macros/s/AKfycbzk7uWcGLJi1Vd_T-dowaz0oYG_0BS9OwOPcRp_0mbZmvMcMWJxKJXOXJbWXm_GXlRJ/exec";
 
