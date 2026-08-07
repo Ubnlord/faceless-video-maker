@@ -390,6 +390,50 @@
 
   <p id="scriptOutput"></p>
 
+
+  <!-- VOICE SELECTOR -->
+  <div style="margin-top:20px;">
+
+    <label for="voiceSelect">
+      🎙️ Choose Voice
+    </label>
+
+    <select id="voiceSelect">
+
+      <option value="male-deep">
+        👨 Male — Deep
+      </option>
+
+      <option value="male-natural">
+        👨 Male — Natural
+      </option>
+
+      <option value="male-energetic">
+        👨 Male — Energetic
+      </option>
+
+      <option value="female-natural">
+        👩 Female — Natural
+      </option>
+
+      <option value="female-warm">
+        👩 Female — Warm
+      </option>
+
+      <option value="female-energetic">
+        👩 Female — Energetic
+      </option>
+
+      <option value="storyteller">
+        🎭 Storyteller
+      </option>
+
+    </select>
+
+  </div>
+
+
+  <!-- VOICEOVER BUTTONS -->
   <div style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap;">
 
     <button
@@ -401,6 +445,7 @@
       🎙️ Generate Voiceover
     </button>
 
+
     <button
       class="generate-btn"
       id="stopVoiceBtn"
@@ -411,6 +456,19 @@
     </button>
 
   </div>
+
+
+  <!-- VOICE STATUS -->
+  <div
+    id="voiceStatus"
+    style="
+      margin-top:15px;
+      color:#aab2c5;
+      line-height:1.6;
+    "
+  ></div>
+
+        </div>
 
   <div
     id="voiceStatus"
