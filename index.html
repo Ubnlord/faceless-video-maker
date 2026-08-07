@@ -386,104 +386,56 @@
 
         <div class="result" id="result">
 
-  <h3>📝 Your Video Script</h3>
+          <h3>📝 Your Video Script</h3>
 
-  <p id="scriptOutput"></p>
+          <p id="scriptOutput"></p>
 
+          <!-- VOICE SELECTOR -->
+          <div style="margin-top:20px;">
+            <label for="voiceSelect">🎙️ Choose Voice</label>
+            <select id="voiceSelect">
+              <option value="male-deep">👨 Male — Deep</option>
+              <option value="male-natural">👨 Male — Natural</option>
+              <option value="male-energetic">👨 Male — Energetic</option>
+              <option value="female-natural">👩 Female — Natural</option>
+              <option value="female-warm">👩 Female — Warm</option>
+              <option value="female-energetic">👩 Female — Energetic</option>
+              <option value="storyteller">🎭 Storyteller</option>
+            </select>
+          </div>
 
-  <!-- VOICE SELECTOR -->
-  <div style="margin-top:20px;">
+          <!-- VOICEOVER BUTTONS -->
+          <div style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap;">
+            <button
+              class="generate-btn"
+              id="voiceBtn"
+              onclick="generateVoiceover()"
+              style="flex:1; min-width:200px;"
+            >
+              🎙️ Generate Voiceover
+            </button>
 
-    <label for="voiceSelect">
-      🎙️ Choose Voice
-    </label>
+            <button
+              class="generate-btn"
+              id="stopVoiceBtn"
+              onclick="stopVoiceover()"
+              style="flex:1; min-width:200px; background:#30384e;"
+            >
+              ⏹️ Stop Voiceover
+            </button>
+          </div>
 
-    <select id="voiceSelect">
+          <!-- VOICE STATUS -->
+          <div
+            id="voiceStatus"
+            style="margin-top:15px; color:#aab2c5; line-height:1.6;"
+          ></div>
 
-      <option value="male-deep">
-        👨 Male — Deep
-      </option>
+        </div> <!-- closes .result -->
 
-      <option value="male-natural">
-        👨 Male — Natural
-      </option>
+      </div> <!-- closes .panel -->
 
-      <option value="male-energetic">
-        👨 Male — Energetic
-      </option>
-
-      <option value="female-natural">
-        👩 Female — Natural
-      </option>
-
-      <option value="female-warm">
-        👩 Female — Warm
-      </option>
-
-      <option value="female-energetic">
-        👩 Female — Energetic
-      </option>
-
-      <option value="storyteller">
-        🎭 Storyteller
-      </option>
-
-    </select>
-
-  </div>
-
-
-  <!-- VOICEOVER BUTTONS -->
-  <div style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap;">
-
-    <button
-      class="generate-btn"
-      id="voiceBtn"
-      onclick="generateVoiceover()"
-      style="flex:1; min-width:200px;"
-    >
-      🎙️ Generate Voiceover
-    </button>
-
-
-    <button
-      class="generate-btn"
-      id="stopVoiceBtn"
-      onclick="stopVoiceover()"
-      style="flex:1; min-width:200px; background:#30384e;"
-    >
-      ⏹️ Stop Voiceover
-    </button>
-
-  </div>
-
-
-  <!-- VOICE STATUS -->
-  <div
-    id="voiceStatus"
-    style="
-      margin-top:15px;
-      color:#aab2c5;
-      line-height:1.6;
-    "
-  ></div>
-
-        </div>
-
-  <div
-    id="voiceStatus"
-    style="
-      margin-top:15px;
-      color:#aab2c5;
-      line-height:1.6;
-    "
-  ></div>
-
-        </div>
-
-      </div>
-
-    </section>
+    </section> <!-- closes #creator -->
 
   </main>
 
@@ -698,10 +650,22 @@ function stopVoiceover() {
 
 
 function extractVoiceover(script) {
-
+  // Try to extract text after "VOICEOVER:" until CALL TO ACTION / HASHTAGS / end
   const match = script.match(
     /VOICEOVER\s*:([\s\S]*?)(?=\n\s*(CALL TO ACTION|HASHTAGS|5 HASHTAGS|$))/i
   );
+
+  let text = match && match[1] ? match[1] : script;
+
+  // Clean up common formatting
+  return text
+    .replace(/\([^)]*\)/g, "")      // remove (scene directions)
+    .replace(/\[[^\]]*\]/g, "")     // remove [brackets]
+    .replace(/\*\*/g, "")           // remove **bold**
+    .replace(/#{1,6}\s*/g, "")      // remove markdown headings
+    .replace(/\n{3,}/g, "\n\n")     // clean extra line breaks
+    .trim();
+}
 
   if (match && match[1]) {
     return match[1]
