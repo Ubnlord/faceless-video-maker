@@ -512,7 +512,85 @@ function openCreator() {
 
   }
     }
+function generateVoiceover() {
 
+  const script = document.getElementById("scriptOutput").textContent;
+  const status = document.getElementById("voiceStatus");
+
+  if (!script || script.trim() === "") {
+    status.textContent = "❌ Generate a script first.";
+    return;
+  }
+
+  if (!("speechSynthesis" in window)) {
+    status.textContent =
+      "❌ Your browser does not support text-to-speech.";
+    return;
+  }
+
+  window.speechSynthesis.cancel();
+
+  const voiceText = extractVoiceover(script);
+
+  if (!voiceText) {
+    status.textContent =
+      "❌ I couldn't find the voiceover text.";
+    return;
+  }
+
+  const utterance = new SpeechSynthesisUtterance(voiceText);
+
+  utterance.rate = 1.0;
+  utterance.pitch = 1.0;
+  utterance.volume = 1.0;
+
+  utterance.onstart = function() {
+    status.textContent = "🎙️ Voiceover playing...";
+  };
+
+  utterance.onend = function() {
+    status.textContent = "✅ Voiceover finished.";
+  };
+
+  utterance.onerror = function() {
+    status.textContent =
+      "❌ Something went wrong with the voiceover.";
+  };
+
+  window.speechSynthesis.speak(utterance);
+}
+
+
+function stopVoiceover() {
+
+  if ("speechSynthesis" in window) {
+    window.speechSynthesis.cancel();
+
+    document.getElementById("voiceStatus").textContent =
+      "⏹️ Voiceover stopped.";
+  }
+
+}
+
+
+function extractVoiceover(script) {
+
+  const match = script.match(
+    /VOICEOVER\s*:([\s\S]*?)(?=\n\s*(CALL TO ACTION|HASHTAGS|5 HASHTAGS|$))/i
+  );
+
+  if (match && match[1]) {
+    return match[1]
+      .replace(/\([^)]*\)/g, "")
+      .replace(/\*\*/g, "")
+      .trim();
+  }
+
+  return script
+    .replace(/\([^)]*\)/g, "")
+    .replace(/\*\*/g, "")
+    .trim();
+}
   </script>
 
 </body>
