@@ -572,9 +572,9 @@ function openCreator() {
   }
     }
 function generateVoiceover() {
-
   const script = document.getElementById("scriptOutput").textContent;
   const status = document.getElementById("voiceStatus");
+  const selectedVoice = document.getElementById("voiceSelect").value;
 
   if (!script || script.trim() === "") {
     status.textContent = "❌ Generate a script first.";
@@ -582,8 +582,7 @@ function generateVoiceover() {
   }
 
   if (!("speechSynthesis" in window)) {
-    status.textContent =
-      "❌ Your browser does not support text-to-speech.";
+    status.textContent = "❌ Your browser does not support text-to-speech.";
     return;
   }
 
@@ -592,28 +591,94 @@ function generateVoiceover() {
   const voiceText = extractVoiceover(script);
 
   if (!voiceText) {
-    status.textContent =
-      "❌ I couldn't find the voiceover text.";
+    status.textContent = "❌ I couldn't find the voiceover text.";
     return;
   }
 
   const utterance = new SpeechSynthesisUtterance(voiceText);
-
   utterance.rate = 1.0;
   utterance.pitch = 1.0;
   utterance.volume = 1.0;
 
-  utterance.onstart = function() {
+  // Apply the selected voice style
+  const voices = window.speechSynthesis.getVoices();
+  
+  let chosenVoice = null;
+
+  if (selectedVoice === "male-deep") {
+    chosenVoice = voices.find(v => 
+      v.name.toLowerCase().includes("male") || 
+      v.name.toLowerCase().includes("david") ||
+      v.name.toLowerCase().includes("james") ||
+      v.lang.startsWith("en")
+    );
+    utterance.pitch = 0.8;
+    utterance.rate = 0.9;
+  } 
+  else if (selectedVoice === "male-natural") {
+    chosenVoice = voices.find(v => 
+      v.name.toLowerCase().includes("male") || 
+      v.name.toLowerCase().includes("mark") ||
+      v.lang.startsWith("en")
+    );
+  } 
+  else if (selectedVoice === "male-energetic") {
+    chosenVoice = voices.find(v => 
+      v.name.toLowerCase().includes("male") || 
+      v.lang.startsWith("en")
+    );
+    utterance.rate = 1.15;
+    utterance.pitch = 1.1;
+  } 
+  else if (selectedVoice === "female-natural") {
+    chosenVoice = voices.find(v => 
+      v.name.toLowerCase().includes("female") || 
+      v.name.toLowerCase().includes("samantha") ||
+      v.name.toLowerCase().includes("karen") ||
+      v.name.toLowerCase().includes("zira")
+    );
+  } 
+  else if (selectedVoice === "female-warm") {
+    chosenVoice = voices.find(v => 
+      v.name.toLowerCase().includes("female") || 
+      v.name.toLowerCase().includes("susan") ||
+      v.name.toLowerCase().includes("moira")
+    );
+    utterance.pitch = 0.95;
+    utterance.rate = 0.95;
+  } 
+  else if (selectedVoice === "female-energetic") {
+    chosenVoice = voices.find(v => 
+      v.name.toLowerCase().includes("female") || 
+      v.name.toLowerCase().includes("samantha")
+    );
+    utterance.rate = 1.2;
+    utterance.pitch = 1.15;
+  } 
+  else if (selectedVoice === "storyteller") {
+    chosenVoice = voices.find(v => 
+      v.name.toLowerCase().includes("daniel") ||
+      v.name.toLowerCase().includes("alex") ||
+      v.name.toLowerCase().includes("male")
+    );
+    utterance.rate = 0.92;
+    utterance.pitch = 0.9;
+  }
+
+  if (chosenVoice) {
+    utterance.voice = chosenVoice;
+  }
+
+  utterance.onstart = function () {
     status.textContent = "🎙️ Voiceover playing...";
   };
 
-  utterance.onend = function() {
+  utterance.onend = function () {
     status.textContent = "✅ Voiceover finished.";
   };
 
-  utterance.onerror = function() {
-    status.textContent =
-      "❌ Something went wrong with the voiceover.";
+  utterance.onerror = function () {
+    status.textContent = "❌ Something went wrong with the voiceover.";
   };
 
   window.speechSynthesis.speak(utterance);
