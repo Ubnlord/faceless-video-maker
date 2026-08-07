@@ -1,1 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <title>Faceless Video Maker</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #0b0f19;
+      color: #ffffff;
+      min-height: 100vh;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 7%;
+      border-bottom: 1px solid #202638;
+      background: #0f1422;
+    }
+
+    .logo {
+      font-size: 21px;
+      font-weight: bold;
+    }
+
+    .logo span {
+      color: #7c5cff;
+    }
+
+    .login-btn {
+      background: transparent;
+      border: 1px solid #343b52;
+      color: white;
+      padding: 9px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    main {
+      width: 90%;
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 80px 15px 60px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #171d30;
+      border: 1px solid #303853;
+      color: #a99aff;
+      padding: 8px 14px;
+      border-radius: 30px;
+      font-size: 13px;
+      margin-bottom: 22px;
+    }
+
+    h1 {
+      font-size: clamp(38px, 7vw, 70px);
+      line-height: 1.05;
+      margin-bottom: 20px;
+    }
+
+    h1 span {
+      color: #8b6cff;
+    }
+
+    .hero p {
+      color: #aab2c5;
+      max-width: 650px;
+      margin: auto;
+      font-size: 18px;
+      line-height: 1.6;
+    }
+
+    .create-btn {
+      margin-top: 30px;
+      background: #7c5cff;
+      color: white;
+      border: none;
+      padding: 15px 26px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .create-btn:hover {
+      background: #6948f0;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      padding-bottom: 70px;
+    }
+
+    .feature {
+      background: #111728;
+      border: 1px solid #242c40;
+      padding: 25px 18px;
+      border-radius: 14px;
+      text-align: center;
+    }
+
+    .feature-icon {
+      font-size: 30px;
+      margin-bottom: 12px;
+    }
+
+    .feature h3 {
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+
+    .feature p {
+      color: #8992a8;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .creator {
+      display: none;
+      padding: 35px 0 70px;
+    }
+
+    .creator h2 {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+
+    .creator-subtitle {
+      color: #8e98ad;
+      margin-bottom: 25px;
+    }
+
+    .panel {
+      background: #111728;
+      border: 1px solid #252d42;
+      border-radius: 15px;
+      padding: 25px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    textarea,
+    select {
+      width: 100%;
+      background: #0b0f19;
+      color: white;
+      border: 1px solid #30384e;
+      border-radius: 9px;
+      padding: 13px;
+      margin-bottom: 20px;
+      outline: none;
+    }
+
+    textarea {
+      min-height: 130px;
+      resize: vertical;
+    }
+
+    select {
+      height: 45px;
+    }
+
+    .options {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+    }
+
+    .generate-btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 9px;
+      background: #7c5cff;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .result {
+      display: none;
+      margin-top: 25px;
+      background: #0b0f19;
+      border: 1px solid #30384e;
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .result h3 {
+      margin-bottom: 12px;
+    }
+
+    .result p {
+      color: #aab2c5;
+      line-height: 1.7;
+      white-space: pre-line;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px;
+      color: #687187;
+      border-top: 1px solid #202638;
+      font-size: 13px;
+    }
+
+    @media (max-width: 750px) {
+      .features {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .options {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        padding-top: 55px;
+      }
+    }
+
+    @media (max-width: 450px) {
+      .features {
+        grid-template-columns: 1fr;
+      }
+
+      header {
+        padding: 15px 5%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="logo">
+      🎬 <span>Faceless</span> Video Maker
+    </div>
+
+    <button class="login-btn" onclick="alert('Login system coming soon!')">
+      Login
+    </button>
+  </header>
+
+  <main>
+
+    <section class="hero" id="home">
+
+      <div class="badge">
+        ✨ AI-Powered Video Creation
+      </div>
+
+      <h1>
+        Turn Your Ideas Into
+        <span>Faceless Videos</span>
+      </h1>
+
+      <p>
+        Create engaging short-form videos for TikTok, YouTube Shorts,
+        Instagram Reels and Facebook without showing your face.
+      </p>
+
+      <button class="create-btn" onclick="openCreator()">
+        🚀 Create Your First Video
+      </button>
+
+    </section>
+
+    <section class="features">
+
+      <div class="feature">
+        <div class="feature-icon">✍️</div>
+        <h3>AI Scripts</h3>
+        <p>Turn simple ideas into engaging video scripts.</p>
+      </div>
+
+      <div class="feature">
+        <div class="feature-icon">🎙️</div>
+        <h3>Voiceovers</h3>
+        <p>Prepare your script for natural AI narration.</p>
+      </div>
+
+      <div class="feature">
+        <div class="feature-icon">🖼️</div>
+        <h3>Visuals</h3>
+        <p>Build scenes and visuals around your story.</p>
+      </div>
+
+      <div class="feature">
+        <div class="feature-icon">🎬</div>
+        <h3>Video Creation</h3>
+        <p>Turn your content into a short-form video.</p>
+      </div>
+
+    </section>
+
+    <section class="creator" id="creator">
+
+      <h2>🎬 Create Your Video</h2>
+
+      <p class="creator-subtitle">
+        Enter an idea and configure your video.
+      </p>
+
+      <div class="panel">
+
+        <label for="topic">
+          What should your video be about?
+        </label>
+
+        <textarea
+          id="topic"
+          placeholder="Example: 5 habits that can completely change your life..."
+        ></textarea>
+
+        <div class="options">
+
+          <div>
+            <label for="niche">Niche</label>
+
+            <select id="niche">
+              <option>Motivation</option>
+              <option>Money</option>
+              <option>Business</option>
+              <option>Relationships</option>
+              <option>Facts</option>
+              <option>Football</option>
+              <option>Technology</option>
+              <option>Storytelling</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="length">Video Length</label>
+
+            <select id="length">
+              <option>30 seconds</option>
+              <option>60 seconds</option>
+              <option>90 seconds</option>
+              <option>3 minutes</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="style">Video Style</label>
+
+            <select id="style">
+              <option>Cinematic</option>
+              <option>Motivational</option>
+              <option>Minimal</option>
+              <option>News</option>
+              <option>Storytelling</option>
+            </select>
+          </div>
+
+        </div>
+
+        <button class="generate-btn" onclick="generateScript()">
+          ✨ Generate Script
+        </button>
+
+        <div class="result" id="result">
+
+          <h3>📝 Your Video Script</h3>
+
+          <p id="scriptOutput"></p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <footer>
+    © 2026 Faceless Video Maker — Create without showing your face.
+  </footer>
+
+  <script>
+
+    function openCreator() {
+      document.getElementById("home").style.display = "none";
+      document.querySelector(".features").style.display = "none";
+      document.getElementById("creator").style.display = "block";
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    }
+
+    function generateScript() {
+
+      const topic = document.getElementById("topic").value.trim();
+      const niche = document.getElementById("niche").value;
+      const length = document.getElementById("length").value;
+
+      if (!topic) {
+        alert("Please enter a video topic first.");
+        return;
+      }
+
+      const result = document.getElementById("result");
+      const output = document.getElementById("scriptOutput");
+
+      output.textContent =
+`HOOK:
+Stop scrolling! This might be exactly what you need to hear today.
+
+INTRO:
+Today we're talking about: ${topic}
+
+MAIN CONTENT:
+Here are some important things you should know about this topic.
+
+First, understand why this matters.
+
+Second, take one small action today instead of waiting for the perfect moment.
+
+Third, stay consistent. Small actions repeated every day can create incredible results.
+
+ENDING:
+If this helped you, save this video and follow for more ${niche.toLowerCase()} content.
+
+VIDEO SETTINGS:
+Niche: ${niche}
+Length: ${length}`;
+
+      result.style.display = "block";
+
+      result.scrollIntoView({
+        behavior: "smooth"
+      });
+    }
+
+  </script>
+
+</body>
+        </html>
