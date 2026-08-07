@@ -404,59 +404,73 @@
 
   <script>
 
-    function openCreator() {
-      document.getElementById("home").style.display = "none";
-      document.querySelector(".features").style.display = "none";
-      document.getElementById("creator").style.display = "block";
+    async function generateScript() {
 
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-      });
+  const topic = document.getElementById("topic").value.trim();
+  const niche = document.getElementById("niche").value;
+  const length = document.getElementById("length").value;
+  const style = document.getElementById("style").value;
+
+  if (!topic) {
+    alert("Please enter a video topic first.");
+    return;
+  }
+
+  const result = document.getElementById("result");
+  const output = document.getElementById("scriptOutput");
+  const button = document.querySelector(".generate-btn");
+
+  const API_URL =
+    "https://script.google.com/macros/s/AKfycbzk7uWcGLJi1Vd_T-dowaz0oYG_0BS9OwOPcRp_0mbZmvMcMWJxKJXOXJbWXm_GXlRJ/exec";
+
+  button.disabled = true;
+  button.textContent = "⏳ Generating...";
+
+  output.textContent = "AI is creating your script...";
+  result.style.display = "block";
+
+  try {
+
+    const params = new URLSearchParams({
+      topic: topic,
+      niche: niche,
+      length: length,
+      style: style
+    });
+
+    const response = await fetch(API_URL + "?" + params.toString());
+
+    if (!response.ok) {
+      throw new Error("Server returned an error: " + response.status);
     }
 
-    function generateScript() {
+    const data = await response.json();
 
-      const topic = document.getElementById("topic").value.trim();
-      const niche = document.getElementById("niche").value;
-      const length = document.getElementById("length").value;
+    if (!data.success) {
+      throw new Error(data.error || "Unable to generate script.");
+    }
 
-      if (!topic) {
-        alert("Please enter a video topic first.");
-        return;
-      }
+    output.textContent = data.script;
 
-      const result = document.getElementById("result");
-      const output = document.getElementById("scriptOutput");
+    result.scrollIntoView({
+      behavior: "smooth"
+    });
 
-      output.textContent =
-`HOOK:
-Stop scrolling! This might be exactly what you need to hear today.
+  } catch (error) {
 
-INTRO:
-Today we're talking about: ${topic}
+    console.error(error);
 
-MAIN CONTENT:
-Here are some important things you should know about this topic.
+    output.textContent =
+      "❌ Error generating script:\n\n" +
+      error.message +
+      "\n\nPlease try again.";
 
-First, understand why this matters.
+  } finally {
 
-Second, take one small action today instead of waiting for the perfect moment.
+    button.disabled = false;
+    button.textContent = "✨ Generate Script";
 
-Third, stay consistent. Small actions repeated every day can create incredible results.
-
-ENDING:
-If this helped you, save this video and follow for more ${niche.toLowerCase()} content.
-
-VIDEO SETTINGS:
-Niche: ${niche}
-Length: ${length}`;
-
-      result.style.display = "block";
-
-      result.scrollIntoView({
-        behavior: "smooth"
-      });
+  }
     }
 
   </script>
