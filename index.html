@@ -386,9 +386,40 @@
 
         <div class="result" id="result">
 
-          <h3>📝 Your Video Script</h3>
+  <h3>📝 Your Video Script</h3>
 
-          <p id="scriptOutput"></p>
+  <p id="scriptOutput"></p>
+
+  <div style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap;">
+
+    <button
+      class="generate-btn"
+      id="voiceBtn"
+      onclick="generateVoiceover()"
+      style="flex:1; min-width:200px;"
+    >
+      🎙️ Generate Voiceover
+    </button>
+
+    <button
+      class="generate-btn"
+      id="stopVoiceBtn"
+      onclick="stopVoiceover()"
+      style="flex:1; min-width:200px; background:#30384e;"
+    >
+      ⏹️ Stop Voiceover
+    </button>
+
+  </div>
+
+  <div
+    id="voiceStatus"
+    style="
+      margin-top:15px;
+      color:#aab2c5;
+      line-height:1.6;
+    "
+  ></div>
 
         </div>
 
