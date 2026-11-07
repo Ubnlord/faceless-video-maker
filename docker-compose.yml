@@ -1,0 +1,22 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      # Optional: point at any OpenAI-compatible endpoint for better scripts.
+      OPENAI_API_KEY: "${OPENAI_API_KEY:-}"
+      OPENAI_BASE_URL: "${OPENAI_BASE_URL:-https://api.openai.com/v1}"
+      OPENAI_MODEL: "${OPENAI_MODEL:-gpt-4o-mini}"
+      FVM_DEFAULT_VOICE: "${FVM_DEFAULT_VOICE:-en-US-AndrewNeural}"
+      FVM_WIDTH: "1080"
+      FVM_HEIGHT: "1920"
+      FVM_FPS: "30"
+    volumes:
+      - fvm-data:/app/data
+      - fvm-output:/app/output
+    restart: unless-stopped
+
+volumes:
+  fvm-data:
+  fvm-output:

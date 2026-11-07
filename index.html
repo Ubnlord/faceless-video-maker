@@ -3,42 +3,574 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="theme-color" content="#0b0f19">
-<meta name="description" content="Create faceless short-form videos from an idea: AI script, storyboard, captions and browser video export.">
+<meta name="theme-color" content="#080b13">
+<meta name="description" content="Create real faceless short-form videos: AI script, neural voiceover, generated visuals and burned-in captions, rendered to an MP4.">
 <title>Faceless Video Maker</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;background:#080b13;color:#fff;min-height:100vh}header{display:flex;align-items:center;justify-content:space-between;padding:16px 6%;border-bottom:1px solid #202638;background:#0e1320;position:sticky;top:0;z-index:5}.logo{font-size:20px;font-weight:800}.logo span,h1 span{color:#8b6cff}.login-btn,.secondary{background:transparent;border:1px solid #343b52;color:#fff;padding:9px 14px;border-radius:8px;cursor:pointer}.wrap{width:92%;max-width:1100px;margin:auto}.hero{text-align:center;padding:65px 10px 45px}.badge{display:inline-block;background:#171d30;border:1px solid #303853;color:#b3a8ff;padding:8px 14px;border-radius:30px;font-size:13px;margin-bottom:20px}h1{font-size:clamp(38px,7vw,70px);line-height:1.05;margin-bottom:18px}.hero p{color:#aab2c5;max-width:680px;margin:auto;font-size:18px;line-height:1.6}.primary{margin-top:26px;background:#7c5cff;color:#fff;border:0;padding:14px 22px;border-radius:10px;font-size:16px;font-weight:800;cursor:pointer}.features{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding-bottom:50px}.feature,.panel,.scene{background:#111728;border:1px solid #252d42;border-radius:14px}.feature{padding:22px 16px;text-align:center}.feature-icon{font-size:28px;margin-bottom:10px}.feature p,.muted{color:#8992a8;font-size:13px;line-height:1.5}.creator{display:none;padding:25px 0 65px}.creator h2{font-size:30px;margin-bottom:7px}.panel{padding:22px;margin-top:20px}label{display:block;margin:0 0 8px;font-size:13px;font-weight:800}textarea,select,input[type=text]{width:100%;background:#080b13;color:#fff;border:1px solid #30384e;border-radius:9px;padding:12px;margin-bottom:17px;outline:0}textarea{min-height:125px;resize:vertical}.options{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.btnrow{display:flex;gap:10px;flex-wrap:wrap}.btnrow button{flex:1;min-width:170px}.result,.studio{display:none;margin-top:20px}.scriptbox{white-space:pre-line;color:#dce1ed;line-height:1.7;background:#080b13;border:1px solid #30384e;border-radius:10px;padding:15px}.tabs{display:flex;gap:8px;margin:20px 0 12px;flex-wrap:wrap}.tab{border:1px solid #30384e;background:#111728;color:#aab2c5;padding:9px 13px;border-radius:8px;cursor:pointer}.tab.active{background:#7c5cff;color:#fff;border-color:#7c5cff}.tabpanel{display:none}.tabpanel.active{display:block}.scenes{display:grid;gap:12px}.scene{padding:15px}.scene-top{display:flex;justify-content:space-between;gap:10px;margin-bottom:10px}.scene textarea{min-height:70px;margin-bottom:8px}.scene-actions{display:flex;gap:8px;flex-wrap:wrap}.scene-actions button{background:#1a2133;border:1px solid #30384e;color:#fff;border-radius:7px;padding:7px 10px;cursor:pointer}.preview-wrap{display:grid;grid-template-columns:360px 1fr;gap:20px;align-items:start}.phone{width:100%;aspect-ratio:9/16;background:#000;border:1px solid #30384e;border-radius:15px;overflow:hidden}.phone canvas{width:100%;height:100%;display:block}.settings{background:#0d1220;border:1px solid #252d42;border-radius:12px;padding:16px}.status{margin-top:12px;color:#aab2c5;line-height:1.5;min-height:24px}.small{font-size:12px;color:#687187;margin-top:8px}footer{text-align:center;padding:25px;color:#687187;border-top:1px solid #202638;font-size:12px}@media(max-width:800px){.features{grid-template-columns:repeat(2,1fr)}.options,.preview-wrap{grid-template-columns:1fr}.phone{max-width:300px;margin:auto}}@media(max-width:450px){.features{grid-template-columns:1fr}header{padding:14px 5%}}
+:root{
+  --bg:#080b13; --bg2:#0d1220; --panel:#111728; --panel2:#0b101c;
+  --line:#232b40; --line2:#2f3852;
+  --txt:#eef1f8; --muted:#8b95ad; --muted2:#687187;
+  --accent:#7c5cff; --accent2:#a78bfa; --accent3:#22d3ee;
+  --ok:#34d399; --warn:#fbbf24; --err:#f87171;
+  --radius:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+  background:var(--bg); color:var(--txt); min-height:100vh; line-height:1.55;
+  -webkit-font-smoothing:antialiased; overflow-x:hidden;
+}
+.orbs{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.orb{position:absolute;border-radius:50%;filter:blur(90px);opacity:.30}
+.orb.a{width:520px;height:520px;background:#5b3df5;top:-180px;left:-120px}
+.orb.b{width:460px;height:460px;background:#0ea5e9;top:22%;right:-160px;opacity:.20}
+.orb.c{width:420px;height:420px;background:#a855f7;bottom:-160px;left:28%;opacity:.16}
+header{
+  position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;
+  gap:16px;padding:14px 5%;border-bottom:1px solid var(--line);
+  background:rgba(8,11,19,.82);backdrop-filter:blur(14px);
+}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:17px;letter-spacing:-.2px}
+.logo .mark{
+  width:32px;height:32px;border-radius:9px;display:grid;place-items:center;font-size:16px;
+  background:linear-gradient(135deg,var(--accent),#4f46e5);box-shadow:0 6px 18px rgba(124,92,255,.4)
+}
+.logo em{font-style:normal;color:var(--accent2)}
+.pill{
+  display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:600;
+  border:1px solid var(--line2);background:var(--panel);color:var(--muted);
+  padding:6px 11px;border-radius:999px;white-space:nowrap
+}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--muted2);flex:none}
+.dot.on{background:var(--ok);box-shadow:0 0 0 3px rgba(52,211,153,.16)}
+.dot.off{background:var(--err);box-shadow:0 0 0 3px rgba(248,113,113,.16)}
+main{position:relative;z-index:1;width:min(1180px,92%);margin:0 auto;padding-bottom:70px}
+.hero{text-align:center;padding:74px 8px 46px}
+.badge{
+  display:inline-flex;align-items:center;gap:8px;background:rgba(124,92,255,.10);
+  border:1px solid rgba(124,92,255,.35);color:var(--accent2);
+  padding:7px 15px;border-radius:999px;font-size:12.5px;font-weight:600;margin-bottom:22px
+}
+h1{font-size:clamp(36px,6.4vw,66px);line-height:1.04;letter-spacing:-2px;font-weight:850;margin-bottom:18px}
+h1 em{font-style:normal;background:linear-gradient(100deg,var(--accent2),var(--accent3));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:var(--muted);max-width:660px;margin:0 auto;font-size:17px}
+.hero-cta{margin-top:30px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.features{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding:14px 0 40px}
+.feature{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:20px 16px}
+.feature .ic{font-size:22px;margin-bottom:9px}
+.feature h3{font-size:14px;margin-bottom:5px;font-weight:700}
+.feature p{color:var(--muted);font-size:12.5px;line-height:1.5}
+button{font-family:inherit;font-size:14px;cursor:pointer;border-radius:11px;transition:.16s ease;border:1px solid transparent}
+button:disabled{opacity:.5;cursor:not-allowed}
+.primary{
+  background:linear-gradient(135deg,var(--accent),#5b3df5);color:#fff;border:0;
+  padding:13px 22px;font-weight:750;box-shadow:0 8px 24px rgba(124,92,255,.32)
+}
+.primary:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 12px 30px rgba(124,92,255,.42)}
+.ghost{background:var(--panel);border:1px solid var(--line2);color:var(--txt);padding:12px 18px;font-weight:600}
+.ghost:hover:not(:disabled){border-color:var(--accent);color:#fff}
+.tiny{background:transparent;border:1px solid var(--line2);color:var(--muted);padding:6px 11px;font-size:12px;font-weight:600}
+.tiny:hover{border-color:var(--accent);color:#fff}
+section.block{display:none;padding:8px 0 40px}
+section.block.show{display:block;animation:rise .35s ease}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px}
+.card + .card{margin-top:16px}
+h2{font-size:22px;letter-spacing:-.5px;font-weight:780;margin-bottom:6px}
+h3{font-size:15px;font-weight:700}
+.sub{color:var(--muted);font-size:13.5px;margin-bottom:18px}
+label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:7px;letter-spacing:.2px}
+textarea,select,input[type=text]{
+  width:100%;background:var(--panel2);color:var(--txt);border:1px solid var(--line2);
+  border-radius:11px;padding:12px 13px;font-family:inherit;font-size:14px;outline:0;transition:.15s
+}
+textarea:focus,select:focus,input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,92,255,.14)}
+textarea{min-height:104px;resize:vertical;line-height:1.6}
+select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:34px}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+.field{margin-bottom:16px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row.end{justify-content:flex-end}
+.switch{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--muted);font-weight:600;cursor:pointer;user-select:none}
+.switch input{appearance:none;width:38px;height:22px;border-radius:999px;background:var(--line2);position:relative;cursor:pointer;transition:.18s;flex:none}
+.switch input:checked{background:var(--accent)}
+.switch input::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.18s}
+.switch input:checked::after{transform:translateX(16px)}
+.scriptbox{
+  white-space:pre-wrap;color:#dbe1ee;line-height:1.75;background:var(--panel2);
+  border:1px solid var(--line2);border-radius:12px;padding:16px;font-size:13.5px;
+  max-height:340px;overflow:auto;font-family:ui-monospace,SFMono-Regular,Menlo,monospace
+}
+.bar{height:9px;border-radius:999px;background:var(--panel2);border:1px solid var(--line2);overflow:hidden;margin:14px 0 10px}
+.bar > i{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,var(--accent),var(--accent3));transition:width .5s ease}
+.stages{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+.stage{font-size:11.5px;font-weight:650;color:var(--muted2);border:1px solid var(--line);background:var(--panel2);padding:5px 10px;border-radius:999px}
+.stage.active{color:#fff;border-color:var(--accent);background:rgba(124,92,255,.16)}
+.stage.done{color:var(--ok);border-color:rgba(52,211,153,.4);background:rgba(52,211,153,.08)}
+.result-grid{display:grid;grid-template-columns:minmax(0,340px) 1fr;gap:22px;align-items:start}
+.player{
+  width:100%;aspect-ratio:9/16;background:#000;border:1px solid var(--line2);
+  border-radius:18px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.55)
+}
+.player video{width:100%;height:100%;display:block;object-fit:contain;background:#000}
+.meta{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:16px 0}
+.meta div{background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:11px 13px}
+.meta span{display:block;font-size:11px;color:var(--muted2);font-weight:700;letter-spacing:.4px;text-transform:uppercase}
+.meta strong{font-size:14px;font-weight:700}
+.scenes{display:grid;gap:9px;max-height:420px;overflow:auto;padding-right:4px}
+.scene{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:grid;grid-template-columns:34px 1fr auto;gap:12px;align-items:start}
+.scene .n{width:26px;height:26px;border-radius:8px;background:rgba(124,92,255,.16);border:1px solid rgba(124,92,255,.35);color:var(--accent2);display:grid;place-items:center;font-size:12px;font-weight:800}
+.scene .cap{font-size:11px;font-weight:800;color:var(--accent3);letter-spacing:.5px;margin-bottom:3px}
+.scene .nar{font-size:13px;color:#cfd6e6;line-height:1.5}
+.scene .t{font-size:11.5px;color:var(--muted2);font-variant-numeric:tabular-nums;white-space:nowrap}
+.lib{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px}
+.libcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;transition:.16s}
+.libcard:hover{border-color:var(--accent);transform:translateY(-2px)}
+.libcard .thumb{aspect-ratio:9/16;background:var(--panel2);display:grid;place-items:center;overflow:hidden}
+.libcard .thumb img{width:100%;height:100%;object-fit:cover}
+.libcard .body{padding:11px 12px}
+.libcard .body p{font-size:12.5px;color:#cfd6e6;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:7px}
+.libcard .body small{font-size:11px;color:var(--muted2)}
+.empty{color:var(--muted2);font-size:13px;text-align:center;padding:26px;border:1px dashed var(--line2);border-radius:12px}
+.err{background:rgba(248,113,113,.09);border:1px solid rgba(248,113,113,.35);color:#fecaca;border-radius:11px;padding:12px 14px;font-size:13px;margin-top:12px}
+.note{font-size:12px;color:var(--muted2);margin-top:10px;line-height:1.5}
+footer{position:relative;z-index:1;text-align:center;padding:26px;color:var(--muted2);border-top:1px solid var(--line);font-size:12px}
+#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(120%);z-index:60;background:var(--panel);border:1px solid var(--line2);color:var(--txt);padding:12px 18px;border-radius:12px;font-size:13px;font-weight:600;box-shadow:0 16px 40px rgba(0,0,0,.5);transition:transform .3s ease;max-width:90vw}
+#toast.show{transform:translateX(-50%) translateY(0)}
+#toast.bad{border-color:rgba(248,113,113,.5)}
+.spin{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;vertical-align:-2px;margin-right:7px}
+@keyframes sp{to{transform:rotate(360deg)}}
+@media(max-width:900px){
+  .features{grid-template-columns:repeat(2,1fr)}
+  .result-grid{grid-template-columns:1fr}
+  .player{max-width:330px;margin:0 auto}
+  .g3,.g4{grid-template-columns:1fr 1fr}
+}
+@media(max-width:560px){
+  .features,.g2,.g3,.g4{grid-template-columns:1fr}
+  header{padding:12px 4%}
+  .logo span.full{display:none}
+}
 </style>
 </head>
 <body>
-<header><div class="logo">🎬 <span>Faceless</span> Video Maker <small style="font-size:10px;color:#687187">V3</small></div><button class="login-btn" onclick="alert('Accounts are coming in a future version.')">Login</button></header>
-<main class="wrap">
-<section class="hero" id="home"><div class="badge">✨ AI Script + Storyboard + Video Export</div><h1>Turn Ideas Into <span>Faceless Videos</span></h1><p>Create short-form content for TikTok, YouTube Shorts, Instagram Reels and Facebook without showing your face.</p><button class="primary" onclick="openCreator()">🚀 Create a Video</button></section>
-<section class="features" id="features"><div class="feature"><div class="feature-icon">✍️</div><h3>AI Scripts</h3><p>Turn an idea into a short-form script.</p></div><div class="feature"><div class="feature-icon">🎙️</div><h3>Voice Preview</h3><p>Listen to your script with your device voice.</p></div><div class="feature"><div class="feature-icon">🧩</div><h3>Storyboard</h3><p>Break your script into scenes and captions.</p></div><div class="feature"><div class="feature-icon">🎬</div><h3>Video Export</h3><p>Render your vertical storyboard as a WebM video.</p></div></section>
-<section class="creator" id="creator"><h2>🎬 Create Your Video</h2><p class="muted" style="font-size:14px;margin-bottom:18px">Start with an idea. The free browser workflow handles the rest.</p>
-<div class="panel"><label for="topic">What should your video be about?</label><textarea id="topic" placeholder="Example: 5 habits that can completely change your life..."></textarea><div class="options"><div><label for="niche">Niche</label><select id="niche"><option>Motivation</option><option>Money</option><option>Business</option><option>Relationships</option><option>Facts</option><option>Football</option><option>Technology</option><option>Storytelling</option></select></div><div><label for="length">Video Length</label><select id="length"><option>30 seconds</option><option>60 seconds</option><option>90 seconds</option><option>3 minutes</option></select></div><div><label for="style">Video Style</label><select id="style"><option>Cinematic</option><option>Motivational</option><option>Minimal</option><option>News</option><option>Storytelling</option></select></div></div><button class="primary" style="width:100%;margin-top:3px" id="scriptBtn" onclick="generateScript()">✨ Generate AI Script</button>
-<div class="result" id="result"><h3 style="margin-bottom:10px">📝 Your Script</h3><div class="scriptbox" id="scriptOutput"></div><div class="btnrow" style="margin-top:12px"><button class="primary" onclick="buildStoryboard()">🧩 Build Storyboard</button><button class="secondary" onclick="generateVoiceover()">🎙️ Listen to Voice</button><button class="secondary" onclick="stopVoiceover()">⏹️ Stop</button></div><div id="voiceStatus" class="status"></div></div></div>
-<div class="studio panel" id="studio"><h2>🎞️ Video Studio</h2><div class="tabs"><button class="tab active" onclick="showTab('story',this)">Storyboard</button><button class="tab" onclick="showTab('preview',this)">Preview & Export</button></div><div class="tabpanel active" id="story"><div class="btnrow" style="margin-bottom:12px"><button class="secondary" onclick="addScene()">➕ Add Scene</button><button class="secondary" onclick="autoScenes()">✨ Rebuild Scenes</button></div><div class="scenes" id="scenes"></div></div><div class="tabpanel" id="preview"><div class="preview-wrap"><div><div class="phone"><canvas id="videoCanvas" width="540" height="960"></canvas></div></div><div class="settings"><label for="captionStyle">Caption Style</label><select id="captionStyle" onchange="renderFrame()"><option value="bold">Bold</option><option value="minimal">Minimal</option><option value="boxed">Boxed</option></select><label for="bgStyle">Background</label><select id="bgStyle" onchange="renderFrame()"><option value="gradient">Gradient</option><option value="dark">Dark</option><option value="light">Light</option></select><label for="fps">Export FPS</label><select id="fps"><option value="24">24 FPS</option><option value="30" selected>30 FPS</option></select><button class="primary" style="width:100%" onclick="exportVideo()">🎬 Export Video</button><div id="exportStatus" class="status"></div><p class="small">Browser export creates a silent WebM from your storyboard. Voice playback is available separately; MP4 + synced AI voice will be added in a later native rendering version.</p></div></div></div></div>
-</section></main><footer>© 2026 Faceless Video Maker — Create without showing your face.</footer>
+<div class="orbs"><div class="orb a"></div><div class="orb b"></div><div class="orb c"></div></div>
+
+<header>
+  <div class="logo">
+    <div class="mark">🎬</div>
+    <div><em>Faceless</em> <span class="full">Video Maker</span></div>
+  </div>
+  <div class="row" style="gap:8px">
+    <span class="pill" id="pillFfmpeg"><i class="dot"></i> ffmpeg</span>
+    <span class="pill" id="pillEngine"><i class="dot"></i> engine</span>
+  </div>
+</header>
+
+<main>
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <div class="badge">✨ Script → Voice → Visuals → Captions → MP4</div>
+    <h1>Turn ideas into <em>faceless videos</em></h1>
+    <p>Type a topic. Get a real, downloadable vertical video with a neural voiceover, generated visuals and word-synced captions — rendered on the server, not faked in the browser.</p>
+    <div class="hero-cta">
+      <button class="primary" onclick="openCreator()">🚀 Create a video</button>
+      <button class="ghost" onclick="scrollToLibrary()">📁 My videos</button>
+    </div>
+  </section>
+
+  <section class="features" id="features">
+    <div class="feature"><div class="ic">✍️</div><h3>AI script</h3><p>Hook, beats and a call to action, written for spoken delivery.</p></div>
+    <div class="feature"><div class="ic">🎙️</div><h3>Neural voice</h3><p>Real MP3 voiceover with word-level timings, not a browser beep.</p></div>
+    <div class="feature"><div class="ic">🧩</div><h3>Generated visuals</h3><p>Procedural cinematic backgrounds, animated with motion per scene.</p></div>
+    <div class="feature"><div class="ic">🎬</div><h3>Real MP4</h3><p>H.264 + AAC, captions burned in, ready for Shorts, Reels and TikTok.</p></div>
+  </section>
+
+  <!-- CREATOR -->
+  <section class="block" id="creator">
+    <div class="card">
+      <h2>🎬 Create your video</h2>
+      <p class="sub">Describe the video. Everything else is generated.</p>
+
+      <div class="field">
+        <label for="topic">What should your video be about?</label>
+        <textarea id="topic" placeholder="Example: 5 habits that can completely change your life"></textarea>
+      </div>
+
+      <div class="grid g3">
+        <div class="field"><label for="niche">Niche</label><select id="niche"></select></div>
+        <div class="field"><label for="length">Length</label><select id="length"></select></div>
+        <div class="field"><label for="style">Style</label><select id="style"></select></div>
+      </div>
+
+      <div class="grid g4">
+        <div class="field"><label for="voice">Voice</label><select id="voice"></select></div>
+        <div class="field"><label for="captionStyle">Captions</label><select id="captionStyle"></select></div>
+        <div class="field"><label for="background">Background</label><select id="background"></select></div>
+        <div class="field"><label for="aspect">Aspect</label><select id="aspect"></select></div>
+      </div>
+
+      <div class="row" style="justify-content:space-between;margin-bottom:16px">
+        <label class="switch"><input type="checkbox" id="music" checked> Music bed</label>
+        <div class="field" style="margin:0;flex:1;max-width:280px">
+          <input type="text" id="brand" value="FACELESS VIDEO MAKER" placeholder="Watermark text">
+        </div>
+      </div>
+
+      <div class="row">
+        <button class="primary" id="btnScript" onclick="generateScript()">✨ Generate script</button>
+        <button class="ghost" id="btnVideo" onclick="createVideo()">🎬 Create video</button>
+      </div>
+      <p class="note">“Create video” runs the whole pipeline: script → voiceover → visuals → captions → MP4. It takes roughly 1–3 minutes.</p>
+      <div id="creatorError"></div>
+    </div>
+
+    <div class="card" id="scriptCard" style="display:none">
+      <div class="row" style="justify-content:space-between;margin-bottom:12px">
+        <h3>📝 Your script</h3>
+        <span class="pill" id="scriptEngine">—</span>
+      </div>
+      <div class="scriptbox" id="scriptOut"></div>
+    </div>
+  </section>
+
+  <!-- PROGRESS -->
+  <section class="block" id="progress">
+    <div class="card">
+      <h2 id="progTitle">🎬 Rendering your video</h2>
+      <p class="sub" id="progMsg">Starting the render…</p>
+      <div class="bar"><i id="progBar"></i></div>
+      <div class="row" style="justify-content:space-between">
+        <span class="pill" id="progPct">0%</span>
+        <span class="pill" id="progJob">—</span>
+      </div>
+      <div class="stages" id="progStages"></div>
+      <div id="progError"></div>
+    </div>
+  </section>
+
+  <!-- RESULT -->
+  <section class="block" id="result">
+    <div class="card">
+      <div class="row" style="justify-content:space-between;margin-bottom:16px">
+        <div><h2>✅ Your video is ready</h2><p class="sub" style="margin:0">Download it, or keep tweaking and render another.</p></div>
+        <button class="ghost" onclick="openCreator()">＋ New video</button>
+      </div>
+
+      <div class="result-grid">
+        <div>
+          <div class="player"><video id="videoEl" controls playsinline preload="metadata"></video></div>
+          <div class="row" style="margin-top:14px">
+            <a id="dlVideo" class="primary" style="text-decoration:none;display:inline-block" download>⬇ Download MP4</a>
+            <a id="dlVoice" class="ghost" style="text-decoration:none;display:inline-block" download>🎙 Voiceover</a>
+            <a id="dlSrt" class="ghost" style="text-decoration:none;display:inline-block" download>💬 Captions</a>
+          </div>
+        </div>
+        <div>
+          <div class="meta" id="resultMeta"></div>
+          <h3 style="margin-bottom:10px">🎞 Scenes</h3>
+          <div class="scenes" id="resultScenes"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LIBRARY -->
+  <section class="block show" id="library">
+    <div class="card">
+      <div class="row" style="justify-content:space-between;margin-bottom:16px">
+        <div><h2>📁 My videos</h2><p class="sub" style="margin:0">Everything you have rendered on this server.</p></div>
+        <button class="tiny" onclick="loadLibrary()">↻ Refresh</button>
+      </div>
+      <div class="lib" id="libGrid"></div>
+    </div>
+  </section>
+</main>
+
+<footer>© 2026 Faceless Video Maker — create without showing your face.</footer>
+<div id="toast"></div>
+
 <script>
-const API_URL='https://script.google.com/macros/s/AKfycbzk7uWcGLJi1Vd_T-dowaz0oYG_0BS9OwOPcRp_0mbZmvMcMWJxKXOXJbWXm_GXlRJ/exec';
-let scenes=[];let currentScene=0;let renderTimer=null;
-function openCreator(){document.getElementById('home').style.display='none';document.getElementById('features').style.display='none';document.getElementById('creator').style.display='block';scrollTo({top:0,behavior:'smooth'})}
-async function generateScript(){const topic=document.getElementById('topic').value.trim();if(!topic){alert('Please enter a video topic first.');return}const btn=document.getElementById('scriptBtn'),out=document.getElementById('scriptOutput'),result=document.getElementById('result');btn.disabled=true;btn.textContent='⏳ Generating...';out.textContent='AI is creating your script...';result.style.display='block';try{const p=new URLSearchParams({topic,niche:document.getElementById('niche').value,length:document.getElementById('length').value,style:document.getElementById('style').value});const r=await fetch(API_URL+'?'+p.toString());if(!r.ok)throw new Error('Server error: '+r.status);const data=await r.json();if(!data.success)throw new Error(data.error||'Unable to generate script.');out.textContent=data.script;buildStoryboard()}catch(e){out.textContent='❌ '+e.message+'\n\nPlease try again.'}finally{btn.disabled=false;btn.textContent='✨ Generate AI Script'}}
-function extractVoiceover(text){return text.replace(/^(HOOK|INTRO|SCENE\s*\d+|VISUALS?|ON[- ]?SCREEN TEXT|VOICEOVER|CTA)\s*:?/gim,'').replace(/\[[^\]]*\]/g,'').replace(/\n{2,}/g,'\n').trim()}
-function generateVoiceover(){const text=extractVoiceover(document.getElementById('scriptOutput').textContent);const status=document.getElementById('voiceStatus');if(!text){status.textContent='❌ Generate a script first.';return}if(!('speechSynthesis' in window)){status.textContent='❌ Text-to-speech is not supported on this device.';return}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.rate=1;u.pitch=1;u.onstart=()=>status.textContent='🎙️ Playing voice preview...';u.onend=()=>status.textContent='✅ Voice preview finished.';speechSynthesis.speak(u)}
-function stopVoiceover(){if('speechSynthesis'in window)speechSynthesis.cancel();document.getElementById('voiceStatus').textContent='⏹️ Voice stopped.'}
-function buildStoryboard(){const script=document.getElementById('scriptOutput').textContent.trim();if(!script)return;autoScenes();document.getElementById('studio').style.display='block';showTab('story',document.querySelector('.tab'));document.getElementById('studio').scrollIntoView({behavior:'smooth'})}
-function splitScript(text){let clean=extractVoiceover(text);let parts=clean.split(/\n+/).map(x=>x.trim()).filter(x=>x.length>15);if(parts.length<3)parts=clean.split(/(?<=[.!?])\s+/).filter(x=>x.length>15);let max=document.getElementById('length').value.startsWith('30')?4:document.getElementById('length').value.startsWith('60')?6:8;return parts.slice(0,max)}
-function autoScenes(){const parts=splitScript(document.getElementById('scriptOutput').textContent);scenes=parts.map((text,i)=>({text,caption:text.slice(0,85),duration:Math.max(3,Math.min(8,Math.round((text.split(/\s+/).length/2.2))))}));if(!scenes.length)scenes=[{text:'Your story starts here.',caption:'YOUR STORY STARTS HERE',duration:4}];currentScene=0;renderScenes();renderFrame()}
-function addScene(){scenes.push({text:'Add your next scene narration here.',caption:'YOUR NEXT SCENE',duration:4});renderScenes()}
-function moveScene(i,dir){const j=i+dir;if(j<0||j>=scenes.length)return;[scenes[i],scenes[j]]=[scenes[j],scenes[i]];currentScene=j;renderScenes();renderFrame()}
-function removeScene(i){scenes.splice(i,1);if(!scenes.length)addScene();currentScene=Math.min(currentScene,scenes.length-1);renderScenes();renderFrame()}
-function renderScenes(){document.getElementById('scenes').innerHTML=scenes.map((s,i)=>`<div class="scene"><div class="scene-top"><strong>Scene ${i+1}</strong><span class="muted">${s.duration}s</span></div><label>Narration</label><textarea onchange="scenes[${i}].text=this.value">${escapeHtml(s.text)}</textarea><label>On-screen caption</label><input type="text" value="${escapeAttr(s.caption)}" onchange="scenes[${i}].caption=this.value;renderFrame()"><div class="scene-actions"><button onclick="currentScene=${i};renderFrame();showTab('preview',document.querySelectorAll('.tab')[1])">👁 Preview</button><button onclick="moveScene(${i},-1)">↑</button><button onclick="moveScene(${i},1)">↓</button><button onclick="removeScene(${i})">🗑 Remove</button></div></div>`).join('')}
-function escapeHtml(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}function escapeAttr(s){return escapeHtml(s).replace(/\n/g,' ')}
-function showTab(id,el){document.querySelectorAll('.tabpanel').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));if(el)el.classList.add('active');if(id==='preview')renderFrame()}
-function wrap(ctx,text,max){const words=text.split(/\s+/),lines=[];let line='';for(const w of words){const test=line?line+' '+w:w;if(ctx.measureText(test).width>max&&line){lines.push(line);line=w}else line=test}if(line)lines.push(line);return lines}
-function renderFrame(){const c=document.getElementById('videoCanvas'),ctx=c.getContext('2d');const s=scenes[currentScene]||{caption:'Your video',text:'Create your story.',duration:4};const bg=document.getElementById('bgStyle')?.value||'gradient';let g;if(bg==='light'){ctx.fillStyle='#f2f4f8';ctx.fillRect(0,0,c.width,c.height);ctx.fillStyle='#111'}else if(bg==='dark'){ctx.fillStyle='#090b12';ctx.fillRect(0,0,c.width,c.height);ctx.fillStyle='#fff'}else{g=ctx.createLinearGradient(0,0,c.width,c.height);g.addColorStop(0,'#171d30');g.addColorStop(.55,'#412b7a');g.addColorStop(1,'#090b12');ctx.fillStyle=g;ctx.fillRect(0,0,c.width,c.height);ctx.fillStyle='#fff'}ctx.textAlign='center';ctx.font='700 22px Arial';ctx.fillStyle=bg==='light'?'#666':'#b8b0ff';ctx.fillText('FACELESS VIDEO MAKER',c.width/2,90);ctx.font='800 44px Arial';let lines=wrap(ctx,s.caption.toUpperCase(),c.width-80);let y=430;for(const line of lines){if((document.getElementById('captionStyle')?.value||'bold')==='boxed'){ctx.fillStyle='rgba(0,0,0,.58)';ctx.fillRect(40,y-48,c.width-80,62)}ctx.fillStyle=bg==='light'?'#111':'#fff';ctx.fillText(line,c.width/2,y);y+=58}ctx.font='400 18px Arial';ctx.fillStyle=bg==='light'?'#444':'#c5cada';ctx.fillText(`Scene ${currentScene+1} / ${Math.max(1,scenes.length)}`,c.width/2,880)}
-async function exportVideo(){if(!scenes.length){alert('Build a storyboard first.');return}const c=document.getElementById('videoCanvas');if(!window.MediaRecorder){document.getElementById('exportStatus').textContent='❌ Your browser does not support video recording.';return}const fps=Number(document.getElementById('fps').value);const stream=c.captureStream(fps);const chunks=[];const rec=new MediaRecorder(stream,{mimeType:'video/webm;codecs=vp9'});rec.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};rec.onstop=()=>{const blob=new Blob(chunks,{type:'video/webm'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='faceless-video.webm';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);document.getElementById('exportStatus').textContent='✅ Video exported. Open it with a video player or convert it to MP4 if needed.'};document.getElementById('exportStatus').textContent='🎬 Rendering video...';rec.start();for(let i=0;i<scenes.length;i++){currentScene=i;renderFrame();await new Promise(r=>setTimeout(r,scenes[i].duration*1000))}rec.stop()}
-autoScenes();
-</script></body></html>
+const $ = (id) => document.getElementById(id);
+const STAGES = ["script","voice","captions","visuals","render","audio","encode","done"];
+const STAGE_LABEL = {script:"Script",voice:"Voice",captions:"Captions",visuals:"Visuals",render:"Scenes",audio:"Music",encode:"Encode",done:"Done"};
+
+let pollTimer = null;
+let currentJob = null;
+
+/* ---------- helpers ---------- */
+function toast(msg, bad){
+  const t = $("toast");
+  t.textContent = msg;
+  t.className = "show" + (bad ? " bad" : "");
+  clearTimeout(t._h);
+  t._h = setTimeout(() => { t.className = ""; }, 4200);
+}
+function esc(s){
+  return String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function fmtTime(sec){
+  sec = Math.max(0, Number(sec) || 0);
+  const m = Math.floor(sec / 60), s = Math.floor(sec % 60);
+  return m + ":" + String(s).padStart(2, "0");
+}
+async function api(path, opts){
+  const res = await fetch(path, opts);
+  const text = await res.text();
+  let data = null;
+  try { data = text ? JSON.parse(text) : null; } catch(e){ data = { detail: text }; }
+  if (!res.ok) throw new Error((data && (data.detail || data.message)) || ("HTTP " + res.status));
+  return data;
+}
+function fill(select, values, selected){
+  select.innerHTML = values.map(v => {
+    const val = typeof v === "string" ? v : v.value;
+    const lab = typeof v === "string" ? v : v.label;
+    return `<option value="${esc(val)}"${val === selected ? " selected" : ""}>${esc(lab)}</option>`;
+  }).join("");
+}
+
+/* ---------- boot ---------- */
+async function boot(){
+  try {
+    const h = await api("/api/health");
+    $("pillFfmpeg").innerHTML = `<i class="dot ${h.ffmpeg ? "on" : "off"}"></i> ffmpeg ${h.ffmpeg ? "ready" : "missing"}`;
+    $("pillEngine").innerHTML = `<i class="dot on"></i> ${h.llm ? esc(h.llm_model) : "offline writer"}`;
+    if (!h.ffmpeg) toast("ffmpeg is missing on the server — rendering is disabled.", true);
+  } catch(e){ toast("Could not reach the API: " + e.message, true); }
+
+  try {
+    const o = await api("/api/options");
+    fill($("niche"), o.niches, "Motivation");
+    fill($("length"), o.lengths, "60 seconds");
+    fill($("style"), o.styles, "Cinematic");
+    fill($("captionStyle"), o.caption_styles, "bold");
+    fill($("aspect"), o.aspects, "9:16");
+  } catch(e){ /* defaults already in the DOM */ }
+
+  try {
+    const b = await api("/api/backgrounds");
+    fill($("background"), b.backgrounds, b.default);
+  } catch(e){}
+
+  try {
+    const v = await api("/api/voices");
+    const list = v.voices || [];
+    const en = list.filter(x => (x.locale || "").startsWith("en"));
+    const rest = list.filter(x => !(x.locale || "").startsWith("en"));
+    fill($("voice"), en.concat(rest).map(x => ({ value: x.name, label: x.label || x.name })), v.default);
+  } catch(e){}
+
+  loadLibrary();
+}
+
+/* ---------- navigation ---------- */
+function openCreator(){
+  $("hero").style.display = "none";
+  $("features").style.display = "none";
+  $("library").classList.remove("show");
+  $("result").classList.remove("show");
+  $("progress").classList.remove("show");
+  $("creator").classList.add("show");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+function scrollToLibrary(){
+  $("library").classList.add("show");
+  $("library").scrollIntoView({ behavior: "smooth" });
+}
+
+/* ---------- script ---------- */
+function payload(){
+  return {
+    topic: $("topic").value.trim(),
+    niche: $("niche").value,
+    length: $("length").value,
+    style: $("style").value,
+    voice: $("voice").value || null,
+    caption_style: $("captionStyle").value,
+    background: $("background").value,
+    aspect: $("aspect").value,
+    brand: $("brand").value.trim(),
+    music: $("music").checked
+  };
+}
+function showCreatorError(msg){
+  $("creatorError").innerHTML = msg ? `<div class="err">${esc(msg)}</div>` : "";
+}
+
+async function generateScript(){
+  const p = payload();
+  if (p.topic.length < 3){ showCreatorError("Please enter a topic first."); return; }
+  showCreatorError("");
+  const btn = $("btnScript");
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span>Writing…';
+  try {
+    const data = await api("/api/script", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(p)
+    });
+    $("scriptOut").textContent = data.script;
+    $("scriptEngine").textContent = data.engine;
+    $("scriptCard").style.display = "block";
+    $("scriptCard").scrollIntoView({ behavior: "smooth", block: "nearest" });
+  } catch(e){
+    showCreatorError("Script generation failed: " + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "✨ Generate script";
+  }
+}
+
+/* ---------- video ---------- */
+async function createVideo(){
+  const p = payload();
+  if (p.topic.length < 3){ showCreatorError("Please enter a topic first."); return; }
+  showCreatorError("");
+  const btn = $("btnVideo");
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span>Starting…';
+  try {
+    const job = await api("/api/videos", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(p)
+    });
+    currentJob = job.id;
+    $("creator").classList.remove("show");
+    $("result").classList.remove("show");
+    $("progress").classList.add("show");
+    $("progError").innerHTML = "";
+    $("progJob").textContent = "job " + job.id;
+    renderProgress(job);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    startPolling(job.id);
+  } catch(e){
+    showCreatorError("Could not start the render: " + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "🎬 Create video";
+  }
+}
+
+function renderProgress(job){
+  const pct = Math.max(0, Math.min(100, job.progress || 0));
+  $("progBar").style.width = pct + "%";
+  $("progPct").textContent = pct + "%";
+  $("progMsg").textContent = job.message || job.stage || "Working…";
+  const idx = STAGES.indexOf(job.stage);
+  $("progStages").innerHTML = STAGES.map((s, i) => {
+    let cls = "stage";
+    if (idx >= 0 && i < idx) cls += " done";
+    else if (i === idx) cls += " active";
+    return `<span class="${cls}">${STAGE_LABEL[s]}</span>`;
+  }).join("");
+}
+
+function startPolling(id){
+  clearInterval(pollTimer);
+  pollTimer = setInterval(async () => {
+    try {
+      const job = await api("/api/videos/" + id);
+      renderProgress(job);
+      if (job.status === "completed"){
+        clearInterval(pollTimer);
+        showResult(job);
+        loadLibrary();
+      } else if (job.status === "failed"){
+        clearInterval(pollTimer);
+        $("progTitle").textContent = "❌ Render failed";
+        $("progError").innerHTML = `<div class="err">${esc(job.error || "Unknown error")}</div>`;
+        toast("The render failed.", true);
+      }
+    } catch(e){
+      clearInterval(pollTimer);
+      $("progError").innerHTML = `<div class="err">Lost contact with the server: ${esc(e.message)}</div>`;
+    }
+  }, 1500);
+}
+
+function showResult(job){
+  $("progress").classList.remove("show");
+  $("result").classList.add("show");
+  $("videoEl").src = "/media/" + job.id + "/video.mp4";
+  $("dlVideo").href = "/api/videos/" + job.id + "/video";
+  $("dlVoice").href = "/api/videos/" + job.id + "/voice";
+  $("dlSrt").href = "/api/videos/" + job.id + "/captions";
+
+  const req = job.request || {};
+  $("resultMeta").innerHTML = [
+    ["Duration", fmtTime(job.duration)],
+    ["Scenes", (job.scenes || []).length],
+    ["Voice", (req.voice || "default").replace("Neural", "")],
+    ["Engine", job.engine || "—"]
+  ].map(([k, v]) => `<div><span>${esc(k)}</span><strong>${esc(v)}</strong></div>`).join("");
+
+  $("resultScenes").innerHTML = (job.scenes || []).map(s => `
+    <div class="scene">
+      <div class="n">${s.index + 1}</div>
+      <div>
+        <div class="cap">${esc(s.caption)}</div>
+        <div class="nar">${esc(s.narration)}</div>
+      </div>
+      <div class="t">${fmtTime(s.start)}–${fmtTime(s.end)}</div>
+    </div>`).join("") || '<div class="empty">No scenes recorded.</div>';
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  toast("Video ready 🎉");
+}
+
+/* ---------- library ---------- */
+async function loadLibrary(){
+  try {
+    const data = await api("/api/videos?limit=24");
+    const jobs = (data.videos || []).filter(j => j.status === "completed");
+    if (!jobs.length){
+      $("libGrid").innerHTML = '<div class="empty">No videos yet. Create your first one above.</div>';
+      return;
+    }
+    $("libGrid").innerHTML = jobs.map(j => `
+      <div class="libcard">
+        <div class="thumb"><img loading="lazy" src="/api/videos/${j.id}/thumbnail" alt="" onerror="this.style.display='none'"></div>
+        <div class="body">
+          <p>${esc((j.request && j.request.topic) || "Untitled")}</p>
+          <small>${fmtTime(j.duration)} · ${(j.scenes || []).length} scenes</small>
+          <div class="row" style="margin-top:9px;gap:6px">
+            <button class="tiny" onclick="openJob('${j.id}')">Open</button>
+            <a class="tiny" style="text-decoration:none;display:inline-block" href="/api/videos/${j.id}/video" download>MP4</a>
+            <button class="tiny" onclick="removeJob('${j.id}')">Delete</button>
+          </div>
+        </div>
+      </div>`).join("");
+  } catch(e){
+    $("libGrid").innerHTML = `<div class="empty">Could not load the library: ${esc(e.message)}</div>`;
+  }
+}
+
+async function openJob(id){
+  try {
+    const job = await api("/api/videos/" + id);
+    if (job.status === "completed") showResult(job);
+    else { $("progress").classList.add("show"); renderProgress(job); startPolling(id); }
+  } catch(e){ toast("Could not open that video: " + e.message, true); }
+}
+
+async function removeJob(id){
+  if (!confirm("Delete this video and its files?")) return;
+  try {
+    await api("/api/videos/" + id, { method: "DELETE" });
+    toast("Deleted.");
+    loadLibrary();
+  } catch(e){ toast("Delete failed: " + e.message, true); }
+}
+
+boot();
+</script>
+</body>
+</html>

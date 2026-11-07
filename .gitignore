@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+*.egg-info/
+.pytest_cache/
+
+# App runtime
+.env
+data/
+output/
+*.sqlite3
+
+# Media produced at runtime
+*.mp4
+*.webm
+*.mp3
+*.wav
+*.ass
+*.srt
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/
